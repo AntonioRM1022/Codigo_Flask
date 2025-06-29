@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Panel Supervisor</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/supervisor.css') }}" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<main>
+  <!-- Sección de usuarios -->
+  <section id="personal">
+
+    <!-- Contenedor de barra y logout -->
+    <div class="top-bar">
+      <!-- Barra de búsqueda -->
+      <div class="search-bar">
+        <input type="text" id="buscar-usuario" placeholder="Buscar usuario..." />
+        <div class="icon">
+          <img src="{{ url_for('static', filename='iconos/buscar(1).png') }}" alt="Buscar" />
+        </div>
+      </div>
+
+      <!-- Icono de logout -->
+      <div class="logout-icon">
+        <a href="{{ url_for('logout') }}" title="Cerrar sesión">
+          <img src="{{ url_for('static', filename='iconos/cerrar-sesion(1).png') }}" alt="Cerrar sesión" />
+        </a>
+      </div>
+    </div>
+
+    <!-- Tarjetas de usuario -->
+    {% for empleado in personal %}
+      <div class="user-card" data-nombre="{{ empleado.nombre | lower }}" data-usuario="{{ empleado.usuario }}">
+        <img class="perfil" src="{{ url_for('static', filename='perfiles/' + empleado.usuario + '.jpg') }}" alt="Foto de {{ empleado.nombre }}">
+        <span>
+          {{ empleado.nombre }} — Rol: {{ empleado.rol }} — Usuario: {{ empleado.usuario }}
+        </span>
+        <div class="rol">{{ empleado.tarjeta }}</div>
+      </div>
+    {% else %}
+      <p style="text-align: center;">No hay personal asignado.</p>
+    {% endfor %}
+
+  </section>
+
+  <!-- Sección inferior con gráficas -->
+  <section id="graficas">
+    <canvas id="graficaQR" width="400" height="400"></canvas>
+    <button onclick="verReporte()">Ver reporte</button>
+  </section>
+</main>
+
+<!-- Scripts -->
+<script>
+  let graficaQR;
+
+  function mostrarGraficaQR(aprobados, denegados) {
+    const ctx = document.getElementById('graficaQR').getContext('2d');
+
+    if (graficaQR) graficaQR.destroy();
+
+    graficaQR = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels: ['QR Aprobados', 'QR Denegados'],
+        datasets: [{
+          data: [aprobados, denegados],
+          backgroundColor: ['#4CAF50', '#F44336'],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { position: 'bottom' },
+          title: {
+            display: true,
+            text: 'Historial de Escaneos del Empleado'
+          }
+        }
+      }
+    });
+  }
+
+  function seleccionarEmpleado(userId) {
+    fetch(`/empleado_info/${userId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          alert("Empleado no encontrado.");
+          return;
+        }
+        mostrarGraficaQR(data.qraprobado || 0, data.qrprohibido || 0);
+      });
+  }
+
+  function verReporte() {
+    const seleccionado = document.querySelector('.user-card.selected');
+    if (!seleccionado) {
+      alert("Selecciona un empleado para ver su reporte.");
+      return;
+    }
+
+    const userId = seleccionado.dataset.usuario;
+    window.open(`/reporte_pdf/${userId}`, '_blank');
+  }
+
+  // Control de inactividad
+  let tiempoInactividad = 10 * 60 * 1000;
+  let timer = setTimeout(cerrarSesion, tiempoInactividad);
+
+  function resetTimer() {
+    clearTimeout(timer);
+    timer = setTimeout(cerrarSesion, tiempoInactividad);
+  }
+
+  function cerrarSesion() {
+    fetch('/logout').then(() => window.location.href = '/login');
+  }
+
+  window.onload = () => {
+    resetTimer();
+    window.onmousemove = resetTimer;
+    window.onkeydown = resetTimer;
+
+    const input = document.getElementById('buscar-usuario');
+    const tarjetas = document.querySelectorAll('.user-card');
+
+    input.addEventListener('input', () => {
+      const filtro = input.value.toLowerCase();
+      tarjetas.forEach(card => {
+        const nombre = card.dataset.nombre || "";
+        card.style.display = nombre.includes(filtro) ? 'flex' : 'none';
+      });
+    });
+
+    tarjetas.forEach(card => {
+      card.addEventListener('click', () => {
+        tarjetas.forEach(t => t.classList.remove('selected'));
+        card.classList.add('selected');
+        const userId = card.dataset.usuario;
+        console.log("Usuario seleccionado:", userId);
+        seleccionarEmpleado(userId);
+      });
+    });
+  };
+</script>
+
+
+</body>
+</html>

@@ -1,0 +1,145 @@
+{
+  "Antoniorm": {
+    "userId": "Antoniorm",
+    "nombre": "Antonio Rayas Martinez",
+    "clave": "123456",
+    "tarjeta": "A",
+    "rol": "empleado",
+    "token": "token_seguro_Antoniorm_1750632353",
+    "expiracion": 1753224353,
+    "foto": "Antoniorm.jpg",
+    "qraprobado": 10,
+    "manuales_vistos": [
+      "maquina_corte",
+      "maquina_corte",
+      "maquina_corte",
+      "maquina_corte",
+      "foco_led",
+      "raton_inalambrico",
+      "Antoniorm",
+      "raton_inalambrico",
+      "maquina_corte",
+      "maquina_corte",
+      "raton_inalambrico",
+      "maquina_corte",
+      "foco_led",
+      "foco_led",
+      "maquina_corte",
+      "raton_inalambrico",
+      "raton_inalambrico",
+      "raton_inalambrico",
+      "raton_inalambrico",
+      "raton_inalambrico",
+      "maquina_corte",
+      "raton_inalambrico",
+      "foco_led",
+      "maquina_corte",
+      "raton_inalambrico"
+    ],
+    "qrprohibido": 15
+  },
+  "Lala": {
+    "userId": "Lala",
+    "nombre": "Angel rayas",
+    "clave": "123456",
+    "tarjeta": "B",
+    "rol": "supervisor",
+    "token": "token_seguro_Lala_1750633682",
+    "expiracion": 1753225682
+  },
+  "Pepe": {
+    "userId": "Pepe",
+    "nombre": "Pedro",
+    "clave": "123456",
+    "tarjeta": "C",
+    "rol": "admin",
+    "token": "token_seguro_Pepe_1750634289",
+    "expiracion": 1753226289
+  },
+  "1234": {
+    "userId": "1234",
+    "nombre": "Juan",
+    "correo": "antonioreach1022@gmail.com",
+    "clave": "123456",
+    "tarjeta": "A",
+    "rol": "admin",
+    "token": "token_seguro_1234_1750832900",
+    "expiracion": 1753424900,
+    "imagen": "perfiles/1234.jpg"
+  },
+  "Cesar1234": {
+    "userId": "Cesar1234",
+    "nombre": "Meza Hernandez Cesar",
+    "correo": "cmeza1n2345@gmail.com",
+    "clave": "123456",
+    "tarjeta": "B",
+    "rol": "administrador",
+    "token": "token_seguro_Cesar1234_1750833009",
+    "expiracion": 1753425009,
+    "foto": "Cesar1234.jpg"
+  },
+  "Martha12345": {
+    "userId": "Martha12345",
+    "nombre": "Martha Isabel",
+    "correo": "popocaisabel33@gmail.com",
+    "clave": "123456",
+    "tarjeta": "B",
+    "rol": "empleado",
+    "token": "token_seguro_Martha12345_1750865255",
+    "expiracion": 1753457255,
+    "foto": "Martha12345.jpg",
+    "qrprohibido": 3,
+    "manuales_vistos": [
+      "raton_inalambrico",
+      "raton_inalambrico",
+      "maquina_corte"
+    ]
+  },
+  "1": {
+    "userId": "1",
+    "nombre": "Antonio",
+    "correo": "antonioreach1022@gmail.com",
+    "clave": "123456",
+    "tarjeta": "A",
+    "rol": "empleado",
+    "token": "token_seguro_1_1750924476",
+    "expiracion": 1753516476,
+    "foto": "1.jpg"
+  },
+  "Sinar12": {
+    "userId": "Sinar12",
+    "nombre": "Sinar Cruz",
+    "correo": "sinarmontalban@gmail.com",
+    "clave": "123456",
+    "tarjeta": "B",
+    "rol": "empleado",
+    "token": "token_seguro_Sinar12_1750970274",
+    "expiracion": 1753562274,
+    "foto": "Sinar12.png",
+    "qrprohibido": 1,
+    "manuales_vistos": [
+      "raton_inalambrico",
+      "maquina_corte"
+    ],
+    "qraprobado": 1
+  },
+  "123456": {
+    "userId": "123456",
+    "nombre": "Antonio",
+    "correo": "antonioreach1022@gmail.com",
+    "clave": "123456",
+    "tarjeta": "A",
+    "rol": "empleado",
+    "token": "token_seguro_123456_1751007773",
+    "expiracion": 1753599773,
+    "foto": "123456.jpg",
+    "qrprohibido": 5,
+    "manuales_vistos": [
+      "maquina_corte",
+      "raton_inalambrico",
+      "raton_inalambrico",
+      "raton_inalambrico",
+      "raton_inalambrico"
+    ]
+  }
+}

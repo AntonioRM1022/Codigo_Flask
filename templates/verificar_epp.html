@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verificación de EPP</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/epp.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <main>
+    <div class="lado-izquierdo">
+      
+      <!-- Cámara -->
+      <section class="camera">
+        <video id="video" autoplay playsinline></video>
+        <canvas id="overlay"></canvas>
+      </section>
+
+      <!-- Gráfica con encabezado -->
+      <div class="grafica-box">
+        <div class="grafica-header">
+          <div class="titulo">Porcentaje de cumplimiento</div>
+          <div class="porcentaje" id="cumplimientoPorcentaje">0%</div>
+        </div>
+        <div class="chart-container">
+          <canvas id="eppChart"></canvas>
+        </div>
+      </div>
+
+    </div>
+    
+<!-- Lado derecho: EPP -->
+<div class="lado-derecho">
+  <section class="epp-info">
+    <div class="bienvenida-epr">
+      Bienvenido al sistema de E.P.R
+    </div>
+    <div class="epp-list">
+      {% for epp in requeridos %}
+      <div class="epp-item epp-{{ epp }}">
+        <div class="img-border">
+          <img src="{{ url_for('static', filename='iconos/' + epp + '.png') }}" alt="{{ epp|capitalize }}">
+        </div>
+
+        <span>{{ epp|capitalize }}</span>
+       <div class="status" id="epp-{{ epp }}">
+  <img src="{{ url_for('static', filename='iconos/rechazado(1).png') }}" alt="Estado" width="24" height="24">
+</div>
+
+
+      </div>
+      {% endfor %}
+    </div>
+    
+  </section>
+</div>
+
+  </main>
+
+  <!-- Modal de inactividad -->
+  <div id="modalInactividad" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.6); justify-content:center; align-items:center; z-index:9999;">
+    <div style="background:#fff; padding:2rem; border-radius:10px; text-align:center; color:#000;">
+      <h2>¿Sigues ahí?</h2>
+      <p>La sesión se cerrará en <span id="contador">10</span> segundos.</p>
+      <button onclick="cancelarCierre()">Continuar</button>
+    </div>
+  </div>
+
+
+<script>
+  const requeridos = {{ requeridos|tojson }};
+  const video = document.getElementById('video');
+  const overlay = document.getElementById('overlay');
+  const ctx = overlay.getContext('2d');
+
+  navigator.mediaDevices.getUserMedia({ video: true })
+    .then(stream => {
+      video.srcObject = stream;
+      video.onloadedmetadata = () => {
+        overlay.width = video.clientWidth;
+        overlay.height = video.clientHeight;
+        setInterval(capturarYEnviar, 2000);
+      };
+    })
+    .catch(err => console.error('Error al acceder a la cámara:', err));
+
+  function capturarYEnviar() {
+    const canvasCapture = document.createElement('canvas');
+    canvasCapture.width = video.videoWidth;
+    canvasCapture.height = video.videoHeight;
+    const ctxCapture = canvasCapture.getContext('2d');
+    ctxCapture.drawImage(video, 0, 0, canvasCapture.width, canvasCapture.height);
+
+    canvasCapture.toBlob(blob => {
+      const formData = new FormData();
+      formData.append('image', blob, 'frame.jpg');
+
+      fetch('/api/verificar_epp', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.detecciones) {
+          dibujarDetecciones(data.detecciones);
+        }
+        if (data.etiquetas) {
+          actualizarEPP(data.etiquetas, requeridos);
+        }
+      });
+    }, 'image/jpeg');
+  }
+
+  function dibujarDetecciones(detecciones) {
+    ctx.clearRect(0, 0, overlay.width, overlay.height);
+    const scaleX = overlay.width / video.videoWidth;
+    const scaleY = overlay.height / video.videoHeight;
+
+    detecciones.forEach(d => {
+      const x1 = d.x1 * scaleX;
+      const y1 = d.y1 * scaleY;
+      const x2 = d.x2 * scaleX;
+      const y2 = d.y2 * scaleY;
+
+      const width = x2 - x1;
+      const height = y2 - y1;
+
+      ctx.strokeStyle = 'lime';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(x1, y1, width, height);
+
+      ctx.fillStyle = 'lime';
+      ctx.font = '16px Arial';
+      ctx.fillText(d.label, x1 + 4, y1 + 18);
+    });
+  }
+
+  const eppChart = new Chart(document.getElementById('eppChart').getContext('2d'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Cumplido', 'Faltante'],
+      datasets: [{
+        data: [0, 100],
+        backgroundColor: ['#4CAF50', '#f44336'],
+        borderWidth: 1
+      }]
+    },
+
+  });
+
+  function actualizarEPP(etiquetas, requeridos) {
+    let cumplidos = 0;
+
+      requeridos.forEach(epp => {
+        const icono = document.getElementById(`epp-${epp}`);
+        if (etiquetas.includes(epp)) {
+          cumplidos++;
+          icono.innerHTML = '<img src="/static/iconos/comprobando(2).png" alt="Cumplido" width="24" height="24">';
+          icono.classList.remove('fail');
+          icono.classList.add('ok');
+        } else {
+          icono.innerHTML = '<img src="/static/iconos/rechazado(1).png" alt="No cumplido" width="24" height="24">';
+          icono.classList.remove('ok');
+          icono.classList.add('fail');
+        }
+      });
+
+
+    const porcentaje = Math.round((cumplidos / requeridos.length) * 100);
+    eppChart.data.datasets[0].data = [porcentaje, 100 - porcentaje];
+    eppChart.update();
+
+    // ✅ Aquí actualizamos el texto del encabezado
+    const porcentajeDiv = document.getElementById('cumplimientoPorcentaje');
+    if (porcentajeDiv) {
+      porcentajeDiv.textContent = `${porcentaje}%`;
+    }
+  }
+
+  // Inactividad y cierre de sesión
+  let tiempoInactividad = 1 * 60 * 1000; // 1 minuto
+  let tiempoAdvertencia = 10 * 1000; // 10 segundos antes
+  let timerInactividad, timerCierre;
+  let contador = 10;
+  let intervaloContador;
+
+  function cerrarSesion() {
+    fetch('/logout')
+      .then(() => window.location.href = '/login');
+  }
+
+  function mostrarModal() {
+    document.getElementById('modalInactividad').style.display = 'flex';
+    contador = 10;
+    document.getElementById('contador').innerText = contador;
+
+    intervaloContador = setInterval(() => {
+      contador--;
+      document.getElementById('contador').innerText = contador;
+      if (contador <= 0) {
+        clearInterval(intervaloContador);
+      }
+    }, 1000);
+
+    timerCierre = setTimeout(cerrarSesion, tiempoAdvertencia);
+  }
+
+  function cancelarCierre() {
+    document.getElementById('modalInactividad').style.display = 'none';
+    clearInterval(intervaloContador);
+    clearTimeout(timerCierre);
+    resetTimer(); // reinicia la sesión
+  }
+
+  function resetTimer() {
+    clearTimeout(timerInactividad);
+    clearTimeout(timerCierre);
+    document.getElementById('modalInactividad').style.display = 'none';
+    timerInactividad = setTimeout(mostrarModal, tiempoInactividad);
+  }
+
+  ['click', 'mousemove', 'keydown', 'scroll', 'touchstart'].forEach(evt => {
+    document.addEventListener(evt, resetTimer);
+  });
+
+  resetTimer();
+</script>
+
+
+
+</body>
+</html>

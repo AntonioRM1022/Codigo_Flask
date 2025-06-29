@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bienvenido</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #319B86, #6E85E6);
+      font-family: sans-serif;
+      text-align: center;
+      padding-top: 20%;
+      color: #222;
+    }
+    .loader {
+      border: 4px solid #e0e0e0;       /* borde más suave */
+      border-top: 4px solid #319B86;   /* línea giratoria en verde */
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    p {
+      margin-bottom: 0; /* elimina margen para no crear espacio extra */
+    }
+    /* Responsivo */
+    @media (max-width: 480px) {
+      body {
+        padding-top: 30%;
+      }
+      .loader {
+        width: 45px;
+        height: 45px;
+        border-width: 3px;
+        border-top-width: 3px;
+      }
+      h2 {
+        font-size: 1.2rem;
+        padding: 0 1rem;
+      }
+      p {
+        font-size: 1rem;
+        padding: 0 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h2>✅ Bienvenido, Espera un segundo 🙌</h2>
+  
+  <div class="loader"></div>
+  <p>Redirigiendo a verificación de EPP...</p>
+
+  <script>
+    setTimeout(() => {
+      window.location.href = "/verificar_epp";
+    }, 3000); // Espera 3 segundos antes de redirigir
+  </script>
+</body>
+</html>

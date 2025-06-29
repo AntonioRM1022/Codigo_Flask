@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Panel Principal - Empleado</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/jsqr/dist/jsQR.js"></script>
+</head>
+<body>
+
+<!-- Menú de navegación superior -->
+<nav class="menu-superior">
+  <div class="menu-links">
+    <a href="#bienvenida">Inicio</a>
+    <a href="#equipos">Manuales</a>
+  </div>
+
+  <!-- Botón Cerrar Sesión con ícono personalizado -->
+  <form action="/logout" method="get" class="logout-form">
+    <button type="submit" class="logout-boton">
+      <img src="{{ url_for('static', filename='iconos/cerrar-sesion.png') }}" alt="Cerrar sesión" />
+    </button>
+  </form>
+</nav>
+
+
+<section id="bienvenida" class="seccion bienvenida">
+  <div class="blanco">
+    <div class="gris">
+      <div class="claro">
+        <div class="tarjeta-usuario">
+          <div class="perfil">
+            <div class="contenedor-img">
+              <img src="{{ url_for('static', filename='perfiles/' + userId + '.jpg') }}" alt="Usuario">
+            </div>
+            <div class="datos">
+              <h2>Bienvenido de nuevo</h2>
+              <h2>{{ nombre }}</h2>
+              <p>Rol: {{ rol }}</p>
+            </div>
+          </div>
+          <div class="logo">
+            <img src="{{ url_for('static', filename='iconos/Tipo_' + tarjeta + '.png') }}" alt="Tarjeta {{ tarjeta }}">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="equipos" class="seccion equipos" style="display: flex; height: 100vh;">
+ <div class="lado-izquierdo">
+  <div class="contenedor-qr">
+    <h1 style="color: white; text-align: center; margin-bottom: 20px;">
+      ¿Buscas un manual más rápido? 😎
+    </h1>
+    <img src="{{ url_for('static', filename='iconos/escaneo-de-codigo-qr(2).png') }}"
+         alt="QR Icono"
+         class="qr-icono"
+         onclick="abrirModalQR()" />
+  </div>
+</div>
+
+
+  <div class="lado-derecho">
+    <div class="contenedor-manuales">
+      <div class="manual-header">Manuales disponibles</div>
+
+      {% for clave, equipo in equipos.items() %}
+        {% if equipo.tarjeta_requerida == tarjeta %}
+          <div class="manual-card">
+            <img src="{{ url_for('static', filename='iconos/pdf.png') }}" alt="PDF" />
+            <div>
+              <a href="{{ url_for('static', filename='manuals/' + equipo.manual) }}" target="_blank">{{ clave.replace('_', ' ') | capitalize }}</a>
+              <p style="font-size: 14px; color: rgb(0, 0, 0); margin: 4px 0 2px;">Tarjeta requerida: {{ equipo.tarjeta_requerida }}</p>
+            </div>
+          </div>
+        {% else %}
+          <div class="manual-card manual-card-bloqueado" style="opacity: 0.5; pointer-events: none;">
+            <img src="{{ url_for('static', filename='iconos/pdf.png') }}" alt="PDF" />
+            <div>
+              <span style="color: #000000;">{{ clave.replace('_', ' ') | capitalize }} (Restringido)</span>
+              <p style="font-size: 14px; color: rgb(0, 0, 0); margin: 4px 0 2px;">Tarjeta requerida: {{ equipo.tarjeta_requerida }}</p>
+              <p style="color: #8d0707; font-size: 12px;">No tienes acceso</p>
+            </div>
+          </div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+</section>
+<!-- Burbuja de Chat -->
+<!-- Burbuja de Chat -->
+<div class="burbuja-chat" onclick="abrirChatBot()">
+  <img src="{{ url_for('static', filename='iconos/chatbot.png') }}" alt="Asistente" />
+</div>
+
+
+<!-- Modal de Chat -->
+<div id="modalChatBot" class="chat-modal">
+  <div class="chat-contenido">
+    <span class="cerrar-chat" onclick="cerrarChatBot()">&times;</span>
+    <h2>Patroclo IA'S</h2>
+    <div id="mensajes-chat" class="mensajes-chat"></div>
+
+    <!-- Contenedor para input + botones -->
+    <div class="chat-input-container">
+      <input type="text" id="entrada-chat" placeholder="Escribe tu mensaje..." />
+      <button onclick="enviarMensaje()">Enviar</button>
+
+      <!-- Botón con ícono desde carpeta /static/iconos/clip.svg -->
+        <button class="icono-boton" onclick="abrirTelegram()">
+          <img src="{{ url_for('static', filename='iconos/telegrama.png') }}" alt="Telegram" />
+        </button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="modalQR" class="modal" style="display: none;">
+  <div class="modal-contenido">
+    <span class="cerrar" onclick="cerrarModalQR()">&times;</span>
+    <h2>🔍 Escaneando QR de Equipo...</h2>
+    <video id="video" autoplay playsinline width="300" height="225"></video>
+    <canvas id="canvas" hidden></canvas>
+    <p id="resultado">Esperando código QR...</p>
+    <a href="/empleado">⬅️ Volver al Panel</a>
+  </div>
+</div>
+<script>
+  const video = document.getElementById('video');
+  const canvas = document.getElementById('canvas');
+  const resultado = document.getElementById('resultado');
+  const ctx = canvas.getContext('2d');
+  let escaneado = false;
+
+  function abrirModalQR() {
+    document.getElementById("modalQR").style.display = "flex";
+    iniciarCamara();
+  }
+
+  function cerrarModalQR() {
+    document.getElementById("modalQR").style.display = "none";
+    if (video.srcObject) {
+      video.srcObject.getTracks().forEach(track => track.stop());
+    }
+    escaneado = false;
+    resultado.textContent = 'Esperando código QR...';
+  }
+
+  function iniciarCamara() {
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+      .then(stream => {
+        video.srcObject = stream;
+        requestAnimationFrame(scanQR);
+      })
+      .catch(err => {
+        mostrarModalError("Error al acceder a la cámara: " + err);
+      });
+  }
+
+  function scanQR() {
+    if (escaneado) return;
+
+    if (video.readyState === video.HAVE_ENOUGH_DATA) {
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const code = jsQR(imageData.data, canvas.width, canvas.height);
+
+      if (code) {
+        escaneado = true;
+        resultado.textContent = `✅ Código detectado: ${code.data}`;
+
+        fetch(`/validar_equipo/${code.data}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: "{{ userId }}" })
+        })
+        .then(async res => {
+          const data = await res.json().catch(() => ({})); // evita error si no es JSON válido
+
+          if (res.ok && data.acceso) {
+            registrarQR("qraprobado", data.nombre_equipo);
+            window.open(`/manual/${data.nombre_equipo}`, '_blank');
+
+          } else {
+            registrarQR("qrprohibido", code.data);
+            mostrarModalError(data.motivo || "QR no válido o acceso restringido.");
+          }
+        })
+        .catch(() => {
+          registrarQR("qrprohibido", code.data);
+          mostrarModalError("❌ Error al validar el código QR.");
+        });
+
+      }
+    }
+
+    requestAnimationFrame(scanQR);
+  }
+
+  function registrarQR(tipo, qrData) {
+    fetch("/registrar_qr", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        tipo: tipo,
+        qr: qrData,
+        userId: "{{ userId }}"
+      })
+    });
+  }
+
+  // Modal de error bonito
+  function mostrarModalError(mensaje) {
+    const modal = document.createElement("div");
+    modal.className = "modal-error";
+    modal.innerHTML = `
+      <div class="modal-error-contenido">
+        <span class="cerrar-error" onclick="this.parentElement.parentElement.remove()">&times;</span>
+        <h3>🚫 Acceso Denegado</h3>
+        <p>${mensaje}</p>
+      </div>
+    `;
+    document.body.appendChild(modal);
+  }
+
+  // Control de sesión por inactividad
+  let tiempoInactividad = 2 * 60 * 1000;
+  let timer = setTimeout(cerrarSesion, tiempoInactividad);
+
+  function resetTimer() {
+    clearTimeout(timer);
+    timer = setTimeout(cerrarSesion, tiempoInactividad);
+  }
+
+  function cerrarSesion() {
+    fetch('/logout')
+      .then(() => window.location.href = '/login');
+  }
+
+  window.onload = resetTimer;
+  window.onmousemove = resetTimer;
+  window.onkeydown = resetTimer;
+
+  // Chatbot
+  function abrirChatBot() {
+    document.getElementById("modalChatBot").style.display = "flex";
+  }
+
+  function cerrarChatBot() {
+    document.getElementById("modalChatBot").style.display = "none";
+  }
+function abrirTelegram() {
+  // Reemplaza el enlace con el de tu bot o grupo
+  window.open("https://t.me/Agente_security_Bot", "_blank");
+}
+
+  function enviarMensaje() {
+    const entrada = document.getElementById("entrada-chat");
+    const mensaje = entrada.value;
+    if (!mensaje) return;
+
+    const mensajesDiv = document.getElementById("mensajes-chat");
+    mensajesDiv.innerHTML += `<div><strong>Tú:</strong> ${mensaje}</div>`;
+    entrada.value = "";
+
+fetch("https://dev1007.app.n8n.cloud/webhook/c7def535-f83a-4893-a167-c9f809b66191", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ mensaje: mensaje, usuario: "{{ nombre }}" })
+})
+    .then(response => response.json())
+    .then(data => {
+      mensajesDiv.innerHTML += `<div><strong>Patroclo:</strong> ${data.respuesta}</div>`;
+    })
+    .catch(() => {
+      mensajesDiv.innerHTML += `<div><em>Error al contactar el asistente</em></div>`;
+    });
+  }
+</script>
+
+</body>
+</html>

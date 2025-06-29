@@ -1,0 +1,313 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  height: 100vh;
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background-color: #363636;
+  color: #ffffff;
+}
+
+main {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: stretch;  /* IMPORTANTE para que hijos tomen toda la altura */
+  gap: 2rem;
+  padding: 2rem;
+  flex-wrap: nowrap;
+  height: 0%;
+}
+.lado-derecho {
+  background-color: #49B59E;
+  flex: 1;
+  min-height: 1px; /* ocupa toda la altura visible */
+  padding-right: 1rem;
+  overflow: visible; /* sin scroll ni ocultar contenido */
+}
+.bienvenida-epr {
+  background-color: #49B59E; /* Cambia el color si lo deseas */
+  color: white;
+  text-align: center;
+  padding: 15px;
+  font-size: 22px;
+  font-weight: bold;
+
+  border-radius: 5px;
+
+  /* Borde hacia adentro (relieve) */
+  box-shadow: inset 4px 4px 5px rgba(0, 0, 0, 0.4),
+              inset -2px -2px 5px rgba(255, 255, 255, 0.05);
+  margin-bottom: 15px;
+}
+
+/* Cámara con bordes tipo inset */
+.camera {
+  width: 370px;
+  height: 280px;
+  border-radius: 15px;
+  box-shadow: inset 4px 4px 8px rgba(0, 0, 0, 0.6),
+              inset -4px -4px 8px rgba(255, 255, 255, 0.1);
+  background-color: #2D293D;
+  display: block;
+  margin-bottom: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.camera video {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  border-radius: 5px;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+#overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  border-radius: 150px;
+}
+
+lado-izquierdo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* centra horizontalmente los hijos */
+  gap: 20px;             /* espacio entre cámara y gráfica */
+  padding: 1rem;         /* opcional, para separar del borde */
+}
+
+/* Cámara ya centrada por su ancho fijo y el contenedor flex */
+
+.grafica-box {
+  width: 290px;          /* ancho fijo igual que tienes */
+  border-radius: 20px;
+  background-color: #e8eaf6;
+  box-shadow: inset 4px 4px 10px rgba(0,0,0,0.4),
+              inset -4px -4px 10px rgba(255,255,255,0.3),
+              4px 4px 12px rgba(0,0,0,0.3);
+  padding: 1rem;
+  overflow: hidden;      /* corregido */
+  /* No margin needed, spacing está con gap en padre */
+}
+
+.grafica-header {
+  background-color: #9e9ccf;
+  border-radius: 12px;
+  padding: 0.6rem 1rem;
+  text-align: center;
+  margin-bottom: 1rem;
+  box-shadow: inset 2px 2px 6px rgba(0,0,0,0.4),
+              inset -2px -2px 6px rgba(255,255,255,0.2);
+}
+
+.grafica-header .titulo {
+  font-size: 1.2rem;
+  color: white;
+}
+
+.grafica-header .porcentaje {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: white;
+}
+
+.chart-container {
+  width: 100%;
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: transparent;
+  padding: 0;
+}
+/* con bordes hacia adentro */
+.chart-container {
+  width: 250px;
+  height: 250px;
+  border-radius: 15px;
+  background-color: #f0f0f4;
+  box-shadow: inset 4px 4px 8px rgba(0,0,0,0.5),
+              inset -4px -4px 8px rgba(255,255,255,0.3);
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lado-derecho {
+  flex: 34;
+  max-width: none;
+  width: auto;
+  height: auto;
+  /* overflow-y: auto; */  /* scroll desactivado */
+  padding-right: 1rem; /* espacio a la derecha */
+}
+
+
+/* Información EPP */
+.epp-info {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: #D4F3E9;
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.4);
+  color: #222;
+  width: 100%;
+}
+
+/* Lista de EPP */
+.epp-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  
+  
+}
+.epp-item:nth-child(1) {
+  background-color: #BFC2E2;
+  border-left: 6px solid #4a4e9f; /* color distinto para borde */
+}
+
+.epp-item:nth-child(2) {
+  background-color: #AAE5D5;
+  border-left: 6px solid #3a8f7f;
+}
+
+.epp-item:nth-child(3) {
+  background-color: #b5f2c0;
+  border-left: 6px solid #47b16d;
+}
+
+.epp-item:nth-child(4) {
+  background-color: #f2e0b5;
+  border-left: 6px solid #b2a347;
+}
+
+.epp-item:nth-child(5) {
+  background-color: #dab5f2;
+  border-left: 6px solid #7a4a9f;
+}
+
+/* Puedes repetir o rotar colores para más elementos */
+/* Primer EPP */
+.epp-item:nth-child(1) .img-border {
+  background-color: #A5A5D4; /* rojo claro */
+}
+
+/* Segundo EPP */
+.epp-item:nth-child(2) .img-border {
+  background-color: #9ae6d1; /* azul claro */
+}
+
+/* Tercer EPP */
+.epp-item:nth-child(3) .img-border {
+  background-color: #9be6aa; /* verde claro */
+}
+
+/* Cuarto EPP */
+.epp-item:nth-child(4) .img-border {
+  background-color: #fff2d6; /* amarillo claro */
+}
+
+/* Si hay más EPPs, puedes repetir o añadir más colores */
+
+.epp-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: 1.2rem;
+  background: #ffffff;
+  color: #222;
+  padding: 0.8rem 1.2rem;
+  border-radius: 12px;
+  
+  /* Borde sólido solo a la izquierda */
+  border-left: 10px solid rgba(0, 0, 0, 0.7);
+  
+  /* Sombra suave solo abajo */
+  box-shadow: 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+}
+.img-border {
+  width: 70px;           /* tamaño total con borde */
+  height: 70px;
+  border-radius: 50%;
+  border: 1px solid black;  /* borde grueso */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;      /* para que la imagen no sobresalga */
+}
+
+.img-border img {
+  width: 50px;           /* tamaño original imagen */
+  height: 50px;
+  border-radius: 60%;    /* círculo */
+  object-fit: cover;
+  border: none;          /* sin borde aquí */
+}
+
+.epp-item img {
+  width: 60px;
+  height: 60px;
+    /* borde redondo (círculo) */
+  /* para ajustar la imagen dentro del círculo */
+ /* línea negra delgada alrededor */
+}
+
+
+.epp-item .status {
+  margin-left: auto;
+  font-size: 1.6rem;
+}
+
+.epp-item .ok {
+  color: green;
+}
+
+.epp-item .fail {
+  color: red;
+}
+
+/* Canvas ajuste */
+canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  main {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .grafica-box {
+    width: 270px;
+  }
+
+  .chart-container {
+    width: 220px;
+    height: 220px;
+  }
+
+  .epp-info {
+    align-items: center;
+  }
+
+  .epp-item {
+    min-width: 250px;
+  }
+}

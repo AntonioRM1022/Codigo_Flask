@@ -1,0 +1,203 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: flex;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+/* Mitad izquierda con imagen */
+.imagen {
+  flex: 1;
+  background-image: url('/static/iconos/Login.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+/* Mitad derecha con formulario */
+.formulario {
+  flex: 1;
+  background-color: #2d2d3a;
+  display: flex;
+  justify-content: center;  /* Centrado horizontal */
+  align-items: center;      /* Centrado vertical */
+  padding: 20px;
+}
+
+/* Contenedor interno del formulario */
+.formulario-contenido {
+  width: 100%;
+  max-width: 350px;
+  display: flex;
+  flex-direction: column;
+}
+
+.titulo-app {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-7%);
+
+
+  font-size: 38px;
+  color: #e0fff3;
+  background-color: #3e6b5d;
+  padding: 14px 12px;
+  border-radius: 0px;
+  box-shadow: 0 0 10px #ffffff;
+
+  width: 300px;
+  height: 60px;
+  text-align: center;
+  line-height: 30px;
+  z-index: 10;
+}
+
+
+/* Título secundario */
+.formulario h2 {
+  margin-bottom: 20px;
+  font-size: 24px;
+  color: #ffffff;
+}
+
+form label {
+  display: flex;
+  align-items: center;
+  background-color: #2D293D;
+  margin-bottom: 15px;
+  padding: 14px 12px; /* padding reducido */
+  border-radius: 5px;
+  color: white;
+  font-size: 15px; /* tamaño moderado */
+
+  /* Borde hacia adentro (relieve) */
+  box-shadow: inset 2px 2px 5px rgba(0, 0, 0, 0.4),
+              inset -2px -2px 5px rgba(255, 255, 255, 0.05);
+}
+
+/* Iconos dentro de los inputs */
+.icono {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+}
+
+/* Inputs de texto y contraseña */
+form input[type="text"],
+form input[type="password"] {
+  font-size: 16px; /* tamaño reducido */
+  padding: 8px 6px; /* padding reducido */
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  color: white;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  user-select: none;
+}
+
+
+/* Recordarme + enlace */
+.extra {
+  display: flex;
+  justify-content: space-between;
+  font-size: 15px; /* tamaño moderado */
+  margin-bottom: 20px;
+  color: #ff0000;
+}
+
+/* Checkbox recordarme */
+.recordarme {
+  display: flex;
+  align-items: center;
+}
+
+/* Color del checkbox */
+.mi-checkbox {
+  accent-color: #ffffff;
+  margin-right: 5px;
+}
+
+/* Mensaje de error */
+.error {
+  color: #ff5e5e;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+/* Botón principal */
+.btn-principal {
+  background-color: #49B59E;
+  color: rgb(255, 255, 255);
+  border: none;
+  padding: 12px; /* padding reducido */
+  border-radius: 5px;
+  width: 100%;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px; /* tamaño moderado */
+  margin-bottom: 10px;
+}
+
+/* Botón secundario */
+.btn-secundario {
+  background-color: #6E85E6;
+  color: white;
+  border: none;
+  padding: 12px; /* padding reducido */
+  width: 100%;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px; /* tamaño moderado */
+}
+
+/* Enlace Restablecer con color personalizado */
+.link-restablecer {
+  color: #B3D4F7;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 15px; /* tamaño reducido */
+}
+
+.link-restablecer:hover {
+  text-decoration: underline;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+
+  .imagen {
+    width: 100%;
+    height: 200px;
+  }
+
+  .formulario {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .titulo-app {
+    top: -40px;
+    left: 0;
+    font-size: 28px;
+    width: 220px;
+    height: 50px;
+    line-height: 25px;
+  }
+}

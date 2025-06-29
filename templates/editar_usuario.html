@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Editar Usuario {{ usuario }}</title>
+</head>
+<body>
+  <h1>✏️ Editar Usuario: {{ usuario }}</h1>
+  <form method="POST">
+    <label>Nombre:<br/><input type="text" name="nombre" value="{{ datos.nombre }}" required></label><br/><br/>
+    <label>Clave:<br/><input type="password" name="clave" value="{{ datos.clave }}" required></label><br/><br/>
+    <label>Tarjeta:<br/>
+      <select name="tarjeta" required>
+        <option value="A" {% if datos.tarjeta == "A" %}selected{% endif %}>A</option>
+        <option value="B" {% if datos.tarjeta == "B" %}selected{% endif %}>B</option>
+        <option value="C" {% if datos.tarjeta == "C" %}selected{% endif %}>C</option>
+      </select>
+    </label><br/><br/>
+    <label>Rol:<br/>
+      <select name="rol" required>
+        <option value="empleado" {% if datos.rol == "empleado" %}selected{% endif %}>Empleado</option>
+        <option value="supervisor" {% if datos.rol == "supervisor" %}selected{% endif %}>Supervisor</option>
+        <option value="admin" {% if datos.rol == "admin" %}selected{% endif %}>Administrador</option>
+      </select>
+    </label><br/><br/>
+    <button type="submit">Guardar cambios</button>
+  </form>
+  <p><a href="{{ url_for('admin') }}">⬅ Volver al panel administrador</a></p>
+
+<script>
+  let tiempoInactividad = 10 * 60 * 1000; // 10 minutos
+  let timer = setTimeout(cerrarSesion, tiempoInactividad);
+
+  function resetTimer() {
+    clearTimeout(timer);
+    timer = setTimeout(cerrarSesion, tiempoInactividad);
+  }
+
+  function cerrarSesion() {
+    fetch('/logout')
+      .then(() => window.location.href = '/login');
+  }
+
+  window.onload = resetTimer;
+  window.onmousemove = resetTimer;
+  window.onkeydown = resetTimer;
+</script>
+</body>
+</html>

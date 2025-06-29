@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Login por QR</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/login_qr.css') }}" />
+  <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+<body>
+  <div class="contenedor">
+    <!-- Imagen a la izquierda -->
+    <div class="lado-izquierdo"></div>
+    <div class="titulo-app">Security corp</div>
+
+    <!-- Lado derecho con QR y cámara -->
+    <div class="lado-derecho">
+      <h2>Escaneo de QR</h2>
+      
+      <!-- Ícono QR que se oculta al activar cámara -->
+      <img id="qr-icono" src="{{ url_for('static', filename='iconos/escaneo-de-codigo-qr.png') }}" alt="QR Icono" class="qr-icono" />
+
+      <!-- Lector de cámara oculto por defecto -->
+      <div id="reader" style="display: none;"></div>
+
+      <p id="mensaje"></p>
+
+      <button class="boton-qr" onclick="iniciarCamara()">Abrir cámara</button>
+      <button class="boton-qr" onclick="subirImagen()">Subir imagen</button>
+    </div>
+  </div>
+
+  <!-- Input oculto para subir imagen -->
+  <input type="file" accept="image/*" id="archivoImagen" style="display: none;" />
+
+  <script>
+    let scanner;
+
+    function iniciarCamara() {
+      console.log("Intentando abrir cámara...");
+
+      // Oculta el ícono QR
+      document.getElementById("qr-icono").style.display = "none";
+      // Muestra el lector de cámara
+      const reader = document.getElementById("reader");
+      reader.style.display = "block";
+
+      if (scanner) {
+        scanner.clear().catch(err => console.error("Error limpiando scanner anterior:", err));
+      }
+
+      scanner = new Html5Qrcode("reader");
+
+      scanner.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 200 },
+        (decodedText, decodedResult) => {
+          document.getElementById("mensaje").innerText = "✅ Código detectado: " + decodedText;
+
+          fetch("/login_qr_validar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ qr: decodedText })
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              window.location.href = data.redirect;
+            } else {
+              document.getElementById("mensaje").innerText = "❌ " + (data.message || "Usuario no válido");
+            }
+          });
+
+          scanner.stop().then(() => {
+            console.log("Escaneo detenido");
+          }).catch(err => {
+            console.error("Error al detener escaneo:", err);
+          });
+        },
+        (errorMsg) => {
+          // Puedes eliminar este log si no quieres ver errores de escaneo frecuentes
+          console.log("QR no detectado en este frame:", errorMsg);
+        }
+      ).catch(err => {
+        console.error("Error iniciando cámara:", err);
+        document.getElementById("mensaje").innerText = "❌ No se pudo iniciar la cámara. Revisa permisos o conexión.";
+      });
+    }
+
+    function subirImagen() {
+      document.getElementById('archivoImagen').click();
+    }
+
+    document.getElementById('archivoImagen').addEventListener('change', function(e) {
+      const archivo = e.target.files[0];
+      if (!archivo) return;
+
+      const lector = new Html5Qrcode("reader");
+
+      // Oculta ícono y muestra lector para consistencia visual
+      document.getElementById("qr-icono").style.display = "none";
+      document.getElementById("reader").style.display = "block";
+
+      lector.scanFile(archivo, true)
+        .then(decodedText => {
+          document.getElementById("mensaje").innerText = "✅ Código detectado en imagen: " + decodedText;
+
+          fetch("/login_qr_validar", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ qr: decodedText })
+          })
+          .then(res => res.json())
+          .then(data => {
+            if (data.success) {
+              window.location.href = data.redirect;
+            } else {
+              document.getElementById("mensaje").innerText = "❌ " + (data.message || "Usuario no válido");
+            }
+          });
+        })
+        .catch(error => {
+          document.getElementById("mensaje").innerText = "❌ No se detectó ningún código QR en la imagen.";
+          console.error("Error al escanear imagen:", error);
+        });
+    });
+  </script>
+</body>
+</html>

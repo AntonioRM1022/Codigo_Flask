@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Panel Administrador</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}" />
+</head>
+<body>
+
+<main>
+  
+  <section id="personal">
+
+    <div class="top-bar">
+      <div class="search-bar">
+        <input type="text" id="buscar-usuario" placeholder="Buscar usuario..." />
+        <div class="icon">
+          <img src="{{ url_for('static', filename='iconos/buscar(1).png') }}" alt="Buscar" />
+        </div>
+      </div>
+      <div class="iconos-accion">
+        <button id="btn-agregar" class="enabled" title="Agregar Usuario">
+          <img src="{{ url_for('static', filename='iconos/nuevo.png') }}">
+        </button>
+        <button id="btn-editar" disabled title="Editar usuarios">
+          <img src="{{ url_for('static', filename='iconos/editar.png') }}">
+        </button>
+        <button id="btn-eliminar" disabled title="Eliminar Usuario">
+          <img src="{{ url_for('static', filename='iconos/eliminar.png') }}">
+        </button>
+        <button id="btn-guardar" title="Guardar Cambios">
+          <img src="{{ url_for('static', filename='iconos/guardar.png') }}">
+        </button>
+      </div>
+            <div class="logout-icon">
+        <a href="{{ url_for('logout') }}" title="Cerrar sesión">
+          <img src="{{ url_for('static', filename='iconos/cerrar-sesion.png') }}" alt="Cerrar sesión" />
+        </a>
+      </div>
+    </div>
+
+
+    <table class="tabla-usuarios">
+      <thead>
+        <tr>
+          <th>Imagen</th>
+          <th>Usuario</th>
+          <th>Nombre</th>
+          <th>Rol</th>
+          <th>Tarjeta</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for usuario, datos in usuarios.items() %}
+        <tr data-usuario="{{ usuario }}">
+          <td>
+            <input type="file" name="nuevaImagen" accept="image/*" id="img-{{ usuario }}" style="display: none;">
+            <label for="img-{{ usuario }}">
+              <img class="perfil" src="{{ url_for('static', filename='perfiles/' + datos.get('foto', 'default.png')) }}">
+            </label>
+          </td>
+          <td class="usuario">{{ usuario }}</td>
+          <td><input type="text" value="{{ datos.get('nombre', '') }}" disabled></td>
+          <td>
+            <select disabled>
+              <option value="admin" {% if datos.get('rol') == 'admin' %}selected{% endif %}>Admin</option>
+              <option value="supervisor" {% if datos.get('rol') == 'supervisor' %}selected{% endif %}>Supervisor</option>
+              <option value="empleado" {% if datos.get('rol') == 'empleado' %}selected{% endif %}>Empleado</option>
+            </select>
+          </td>
+          <td>
+            <select disabled>
+              <option value="A" {% if datos.get('tarjeta') == 'A' %}selected{% endif %}>A</option>
+              <option value="B" {% if datos.get('tarjeta') == 'B' %}selected{% endif %}>B</option>
+              <option value="C" {% if datos.get('tarjeta') == 'C' %}selected{% endif %}>C</option>
+            </select>
+          </td>
+        </tr>
+        {% else %}
+        <tr><td colspan="5">No hay usuarios registrados.</td></tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <!-- Modales -->
+    <div id="modalGuardado" class="modal">
+      <div class="modal-content exito">
+        <h3>✅ Se guardó correctamente el campo seleccionado</h3>
+        <button onclick="cerrarModal('modalGuardado')">Confirmar</button>
+      </div>
+    </div>
+
+    <div id="modalEliminado" class="modal">
+      <div class="modal-content eliminado">
+        <h3>🗑️ Se eliminó correctamente el campo seleccionado</h3>
+        <button onclick="cerrarModal('modalEliminado')">Confirmar</button>
+      </div>
+    </div>
+
+    <div id="modalRegistro" class="modal">
+      <div class="modal-content">
+        <span class="cerrar" onclick="cerrarModal('modalRegistro')">&times;</span>
+        <h3>Registro de Usuario</h3>
+        <form id="formRegistro" enctype="multipart/form-data">
+          <input name="nombre" placeholder="Nombre completo" required><br>
+          <input name="userId" placeholder="Nombre de usuario (único)" required><br>
+          <input type="email" name="correo" placeholder="Correo electrónico" required><br>
+          <input type="password" name="clave" placeholder="Contraseña" required><br>
+          <label>Tarjeta:</label>
+          <select name="tarjeta" required>
+            <option value="A">A</option>
+            <option value="B">B</option>
+            <option value="C">C</option>
+          </select><br>
+          <label>Rol:</label>
+          <select name="rol" required>
+            <option value="empleado">Empleado</option>
+            <option value="supervisor">Supervisor</option>
+            <option value="admin">Admin</option>
+          </select><br>
+          <label>Foto de perfil:</label>
+          <input type="file" name="imagen" accept="image/*" required><br>
+          <button type="submit">Registrar</button>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ✅ JavaScript corregido -->
+<script>
+  let filaSeleccionada = null;
+  const btnAgregar = document.getElementById("btn-agregar");
+  const btnEditar = document.getElementById("btn-editar");
+  const btnEliminar = document.getElementById("btn-eliminar");
+  const btnGuardar = document.getElementById("btn-guardar");
+
+  document.querySelectorAll("tbody tr").forEach(fila => {
+    fila.addEventListener("click", () => {
+      document.querySelectorAll("tbody tr").forEach(f => f.classList.remove("selected"));
+      fila.classList.add("selected");
+      filaSeleccionada = fila;
+
+      // Activar botones editar/eliminar
+      btnEditar.disabled = false;
+      btnEditar.classList.add("enabled");
+
+      btnEliminar.disabled = false;
+      btnEliminar.classList.add("enabled");
+
+      // No mostramos aún el botón guardar
+      btnGuardar.classList.remove("enabled");
+    });
+  });
+
+  // Abrir modal de registro
+  btnAgregar.addEventListener("click", () => {
+    document.getElementById("modalRegistro").style.display = "flex";
+  });
+
+  // Registrar usuario
+  document.getElementById("formRegistro").addEventListener("submit", function (e) {
+    e.preventDefault();
+    const formData = new FormData(this);
+    fetch("/registrar_modal", {
+      method: "POST",
+      body: formData
+    }).then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          alert("✅ Usuario registrado con éxito");
+          location.reload();
+        } else {
+          alert("❌ Error: " + data.error);
+        }
+      });
+  });
+
+  // Al presionar EDITAR
+  btnEditar.addEventListener("click", () => {
+    if (!filaSeleccionada) return;
+
+    // Activar edición
+    filaSeleccionada.querySelectorAll("input, select").forEach(el => el.disabled = false);
+
+    // Mostrar botón guardar
+    btnGuardar.classList.add("enabled");
+    btnGuardar.style.display = "inline-block";
+
+    // Desactivar agregar y editar
+    btnAgregar.disabled = true;
+    btnAgregar.classList.remove("enabled");
+
+    btnEditar.disabled = true;
+    btnEditar.classList.remove("enabled");
+
+    // (opcional) desactivar eliminar para evitar conflictos
+    btnEliminar.disabled = true;
+    btnEliminar.classList.remove("enabled");
+  });
+
+  // Al presionar GUARDAR
+  btnGuardar.addEventListener("click", () => {
+    if (!filaSeleccionada) return;
+
+    const usuario = filaSeleccionada.dataset.usuario;
+    const nombre = filaSeleccionada.querySelector("input[type='text']").value;
+    const selects = filaSeleccionada.querySelectorAll("select");
+    const rol = selects[0].value;
+    const tarjeta = selects[1].value;
+
+    // Enviar al servidor
+    fetch(`/admin/editar_usuario/${usuario}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ nombre, rol, tarjeta })
+    }).then(res => {
+      if (res.ok) {
+        // Mostrar modal
+        document.getElementById("modalGuardado").style.display = "flex";
+
+        // Volver a desactivar inputs
+        filaSeleccionada.querySelectorAll("input, select").forEach(el => el.disabled = true);
+
+        // Restaurar botones
+        btnGuardar.classList.remove("enabled");
+        btnGuardar.style.display = "none";
+
+        btnAgregar.disabled = false;
+        btnAgregar.classList.add("enabled");
+
+        btnEditar.disabled = false;
+        btnEditar.classList.add("enabled");
+
+        btnEliminar.disabled = false;
+        btnEliminar.classList.add("enabled");
+      }
+    });
+  });
+
+  // Eliminar usuario
+  btnEliminar.addEventListener("click", () => {
+    if (!filaSeleccionada) return;
+    const usuario = filaSeleccionada.dataset.usuario;
+    const confirmar = confirm(`¿Eliminar al usuario ${usuario}?`);
+    if (confirmar) {
+      fetch("/admin/eliminar_usuario", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ usuario })
+      }).then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            filaSeleccionada.remove();
+            document.getElementById("modalEliminado").style.display = "flex";
+          } else {
+            alert("❌ Error: " + data.error);
+          }
+        });
+    }
+  });
+
+  function cerrarModal(id) {
+    document.getElementById(id).style.display = "none";
+  }
+</script>
+
+</body>
+</html>

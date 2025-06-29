@@ -1,0 +1,137 @@
+/* login_qr.css */
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body, html {
+  height: 100%;
+  font-family: Arial, sans-serif;
+  background-color:#2D293D ;
+}
+
+.contenedor {
+  display: flex;
+  height: 100vh;
+}
+
+/* Mitad izquierda con imagen */
+.lado-izquierdo {
+  flex: 1;
+  background-image: url('/static/iconos/Login.jpg'); /* misma imagen que antes */
+  background-size: cover;
+  background-position: center;
+}
+
+.titulo-app {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-7%);
+
+
+  font-size: 38px;
+  color: #e0fff3;
+  background-color: #3e6b5d;
+  padding: 14px 12px;
+  border-radius: 0px;
+  box-shadow: 0 0 10px #ffffff;
+
+  width: 300px;
+  height: 60px;
+  text-align: center;
+  line-height: 30px;
+  z-index: 10;
+}
+/* Mitad derecha con contenido */
+.lado-derecho {
+  flex: 1;
+  background-color: #2d2d3a;
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* vertical */
+  align-items: center;     /* horizontal */
+  padding: 20px;
+  color: white;
+}
+
+.lado-derecho h2 {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.qr-icono, #reader {
+  width: 250px;
+  height: 250px;
+  border-radius: 15px;
+  box-shadow: inset 4px 4px 8px rgba(0,0,0,0.6),
+              inset -4px -4px 8px rgba(255,255,255,0.1);
+  background-color: #2D293D;
+  display: block;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+#reader video {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover;
+  border-radius: 15px;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+
+/* Mensaje */
+#mensaje {
+  min-height: 24px;
+  margin-bottom: 20px;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Botones */
+.boton-qr {
+  background-color: #49B59E;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  margin: 8px 0;
+  width: 180px;
+  transition: background-color 0.3s;
+}
+
+.boton-qr:hover {
+  background-color: #3b8d7e;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  .contenedor {
+    flex-direction: column;
+  }
+  .lado-izquierdo {
+    height: 200px;
+    flex: none;
+  }
+  .lado-derecho {
+    flex: none;
+    padding: 20px 10px;
+  }
+    .titulo-app {
+    top: -40px;
+    left: 0;
+    font-size: 28px;
+    width: 220px;
+    height: 50px;
+    line-height: 25px;
+  }
+}

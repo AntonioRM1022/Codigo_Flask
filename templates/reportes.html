@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reportes</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/dash.css') }}" />
+</head>
+<body>
+  <h1>📄 Reportes</h1>
+  <ul>
+    {% for reporte in reportes %}
+      <li>{{ reporte.titulo }} - {{ reporte.fecha }}</li>
+    {% else %}
+      <li>No hay reportes disponibles.</li>
+    {% endfor %}
+  </ul>
+  <a href="{{ url_for('supervisor') }}">⬅ Volver al panel supervisor</a>
+
+<script>
+  let tiempoInactividad = 2 * 60 * 1000; // 10 minutos
+  let timer = setTimeout(cerrarSesion, tiempoInactividad);
+
+  function resetTimer() {
+    clearTimeout(timer);
+    timer = setTimeout(cerrarSesion, tiempoInactividad);
+  }
+
+  function cerrarSesion() {
+    fetch('/logout')
+      .then(() => window.location.href = '/login');
+  }
+
+  window.onload = resetTimer;
+  window.onmousemove = resetTimer;
+  window.onkeydown = resetTimer;
+</script>
+</body>
+</html>
+

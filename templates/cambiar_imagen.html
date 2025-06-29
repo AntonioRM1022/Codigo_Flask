@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Cambiar Imagen</title>
+</head>
+<body>
+  <h2>Cambiar Imagen de Perfil - {{ usuario }}</h2>
+  <form method="post" enctype="multipart/form-data">
+    <input type="file" name="imagen" accept="image/*" required><br><br>
+    <button type="submit">Actualizar Imagen</button>
+  </form>
+  <br>
+  <a href="{{ url_for('admin') }}">⬅ Volver al Panel</a>
+</body>
+</html>

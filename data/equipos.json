@@ -1,0 +1,49 @@
+{
+  "foco_led": {
+    "manual": "foco_led.pdf",
+    "tarjeta_requerida": "C",
+    "herramientas": ["guantes", "escalera", "destornillador"]
+  },
+  "maquina_corte": {
+    "manual": "cortadora.pdf",
+    "tarjeta_requerida": "B",
+    "herramientas": ["guantes", "gafas", "llave inglesa"]
+  },
+  "raton_inalambrico": {
+    "manual": "raton_manual.pdf",
+    "tarjeta_requerida": "A",
+    "herramientas": ["pilas", "destornillador pequeño"]
+  },
+  
+  "taladro_electrico": {
+    "manual": "taladro_manual.pdf",
+    "tarjeta_requerida": "B",
+    "herramientas": ["brocas", "guantes", "gafas", "cinta metrica"]
+  },
+  "pulidora": {
+    "manual": "pulidora.pdf",
+    "tarjeta_requerida": "C",
+    "herramientas": ["discos_pulido", "mascarilla", "guantes"]
+  },
+  "sierra_circular": {
+    "manual": "sierra_circular.pdf",
+    "tarjeta_requerida": "B",
+    "herramientas": ["gafas", "guantes", "metro", "pinzas"]
+  },
+  "aspiradora_industrial": {
+    "manual": "aspiradora.pdf",
+    "tarjeta_requerida": "A",
+    "herramientas": ["filtros_repuesto", "cargador"]
+  },
+  "llave_impacto": {
+    "manual": "llave_impacto.pdf",
+    "tarjeta_requerida": "C",
+    "herramientas": ["casquillos", "guantes", "gafas"]
+  },
+  "soldador": {
+    "manual": "soldador.pdf",
+    "tarjeta_requerida": "C",
+    "herramientas": ["careta_soldar", "estaño", "pinzas"]
+  }
+
+}

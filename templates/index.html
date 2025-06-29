@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Inicio</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/inicio.css') }}">
+</head>
+<body>
+  <h1>Sistema de Verificación</h1>
+  <a href="/captura">📸 Capturar Imagen</a>
+
+<script>
+  let tiempoInactividad = 2 * 60 * 1000; // 10 minutos
+  let timer = setTimeout(cerrarSesion, tiempoInactividad);
+
+  function resetTimer() {
+    clearTimeout(timer);
+    timer = setTimeout(cerrarSesion, tiempoInactividad);
+  }
+
+  function cerrarSesion() {
+    fetch('/logout')
+      .then(() => window.location.href = '/login');
+  }
+
+  window.onload = resetTimer;
+  window.onmousemove = resetTimer;
+  window.onkeydown = resetTimer;
+</script>
+</body>
+</html>

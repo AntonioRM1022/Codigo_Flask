@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Inicio de Sesión</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
+</head>
+<body>
+  <div class="imagen"></div>
+<div class="titulo-app">Security corp</div>
+  <div class="formulario">
+    <div class="formulario-contenido">
+      
+      <h2>Inicio de sesión</h2>
+      
+      {% if error %}
+        <p class="error">{{ error }}</p>
+      {% endif %}
+      <form method="post">
+<label>
+  <img src="{{ url_for('static', filename='iconos/ingeniero.png') }}" alt="user" class="icono">
+  <input type="text" name="usuario" placeholder="Usuario" required>
+</label>
+
+<label style="position: relative;">
+  <img src="{{ url_for('static', filename='iconos/seguro(1).png') }}" alt="lock" class="icono">
+  <input type="password" id="passwordInput" name="clave" placeholder="Contraseña" required>
+  <span class="toggle-password" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer;">
+    <img id="eyeIcon" src="{{ url_for('static', filename='iconos/ojo(1).png') }}" alt="Mostrar/Ocultar" width="20" height="20">
+  </span>
+</label>
+
+
+        <div class="extra">
+          <label class="recordarme">
+            <input type="checkbox" class="mi-checkbox"> Recordarme
+          </label>
+         <a href="{{ url_for('forgot_password') }}" class="link-restablecer">Restablecer</a>
+
+        </div>
+
+        <button type="submit" class="btn-principal">Iniciar sesión</button>
+        <button type="button" class="btn-secundario">Iniciar sesión con QR</button>
+      </form>
+    </div>
+  </div>
+  <script>
+    const togglePassword = document.querySelector('.toggle-password');
+const passwordInput = document.getElementById('passwordInput');
+const eyeIcon = document.getElementById('eyeIcon');
+
+togglePassword.addEventListener('click', () => {
+  if (passwordInput.type === 'password') {
+    passwordInput.type = 'text';
+    eyeIcon.src = '/static/iconos/ojo.png';  // ojo abierto
+  } else {
+    passwordInput.type = 'password';
+    eyeIcon.src = '/static/iconos/ojo(1).png'; // ojo cerrado
+  }
+});
+  // 👉 Redirigir al login por QR al hacer clic en el botón
+  const qrBtn = document.querySelector('.btn-secundario');
+  qrBtn.addEventListener('click', () => {
+    window.location.href = '/login_qr'; // Asegúrate que esta ruta exista en tu Flask app
+  });
+  </script>
+</body>
+</html>

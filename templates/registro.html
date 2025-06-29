@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/registro.css') }}">
+</head>
+<body>
+  <h2>Registro de Usuario</h2>
+
+<form method="post" enctype="multipart/form-data">
+  <input name="nombre" placeholder="Nombre completo" required><br>
+  <input name="userId" placeholder="Nombre de usuario (único)" required><br>
+  <input type="email" name="correo" placeholder="Correo electrónico" required><br>
+  <input type="password" name="clave" placeholder="Contraseña" required><br>
+  <input name="tarjeta" placeholder="Tarjeta (A/B/C)" required><br>
+
+  <label>Rol:</label>
+  <select name="rol" required>
+    <option value="empleado">Empleado</option>
+    <option value="supervisor">Supervisor</option>
+    <option value="admin">Administrador</option>
+  </select><br>
+
+  <!-- Campo para subir imagen -->
+  <label>Foto de perfil:</label>
+  <input type="file" name="imagen" accept="image/*" required><br>
+
+  <button type="submit">Registrar</button>
+</form>
+
+
+{% if mostrar_modal %}
+  <div class="modal">
+    <div class="modal-content">
+      <h3>✅ Usuario creado exitosamente</h3>
+      <p><strong>Usuario:</strong> {{ nuevo_usuario.userId }}</p>
+      <p><strong>Correo:</strong> {{ nuevo_usuario.correo }}</p>
+      <p><strong>Contraseña:</strong> {{ nuevo_usuario.clave }}</p>
+      <p><strong>Rol:</strong> {{ nuevo_usuario.rol }}</p>
+
+      <!-- Foto de perfil -->
+      <img src="{{ url_for('static', filename='perfiles/' + nuevo_usuario.foto) }}" alt="Foto de perfil" width="150"><br>
+
+      <img src="{{ url_for('static', filename='qr/' + nuevo_usuario.userId + '.png') }}" alt="QR"><br>
+      <a href="/">Ir al login</a>
+    </div>
+  </div>
+{% endif %}
+
+
+<script>
+  let tiempoInactividad = 2 * 60 * 1000; // 10 minutos
+  let timer = setTimeout(cerrarSesion, tiempoInactividad);
+
+  function resetTimer() {
+    clearTimeout(timer);
+    timer = setTimeout(cerrarSesion, tiempoInactividad);
+  }
+
+  function cerrarSesion() {
+    fetch('/logout')
+      .then(() => window.location.href = '/login');
+  }
+
+  window.onload = resetTimer;
+  window.onmousemove = resetTimer;
+  window.onkeydown = resetTimer;
+</script>
+</body>
+</html>
